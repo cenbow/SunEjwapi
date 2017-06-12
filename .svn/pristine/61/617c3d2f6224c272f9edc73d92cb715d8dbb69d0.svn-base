@@ -1,0 +1,104 @@
+package com.huaao.sunejwapi.api.control;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.huaao.sunejwapi.api.dto.pub.DtoCreateNew;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicRequest;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicResponse;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicResponseList;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicResponseObj;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceAppointmentRequest;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceAppraiseRequest;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceCreateRequest;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceQueryAppointmentDateRequest;
+import com.huaao.sunejwapi.api.dto.residence.ResidenceAppointmentDate;
+import com.huaao.sunejwapi.api.dto.residence.ResidenceInfo;
+import com.huaao.sunejwapi.api.util.ResidenceAppointmentDateUtil;
+import com.huaao.sunejwapi.common.util.DateTool;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+import com.huaao.sunejwapi.dao.SpsResidence;
+import com.huaao.sunejwapi.service.ResidenceService;
+
+
+@ApiDescription("落户信息")
+@Controller
+@RequestMapping("apis-sun/residence")
+public class ResidenceController {
+	@Autowired
+	private ResidenceService  residenceService;
+	@ApiDescription("落户信息查询;负责人:fuwei")
+	@RequestMapping("query")
+	@ResponseBody
+	public DtoPublicResponseList<ResidenceInfo> query(@Valid DtoPublicRequest dtoRequest) throws Exception {
+		DtoPublicResponseList dtoResponse = new DtoPublicResponseList<>();
+		dtoResponse.initDemoData(ResidenceInfo.class);
+		return dtoResponse;
+	}
+	
+	@ApiDescription("落户信息创建;负责人:fuwei")
+	@RequestMapping("createAndUpdate")
+	@ResponseBody
+	public DtoPublicResponseObj<DtoCreateNew> createAndUpdate(@Valid DtoResidenceCreateRequest dtoRequest) throws Exception {
+		DtoPublicResponseObj dtoResponse = new DtoPublicResponseObj<>();
+		dtoResponse.initDemoData(DtoCreateNew.class);
+		return dtoResponse;
+	}
+	
+//	@ApiDescription("落户信息评价;负责人:luping")
+//	@RequestMapping("appraise")
+//	@ResponseBody
+//	public DtoPublicResponse appraise(@Valid DtoResidenceAppraiseRequest dtoRequest) throws Exception {
+//		DtoPublicResponse dtoResponse = new DtoPublicResponse();
+//		if (dtoRequest.getId() != null && dtoRequest.getApprasieAttitude() != null && dtoRequest.getApprasieDate() != null
+//				&& dtoRequest.getApprasieDressing() != null && dtoRequest.getApprasieTotal() != null) {
+//			SpsResidence residence = new SpsResidence();
+//			residence.setId(dtoRequest.getId());
+//			residence.setApprasieAttitude(dtoRequest.getApprasieAttitude());
+//			residence.setApprasieDate(dtoRequest.getApprasieDate());
+//			residence.setApprasieDressing(dtoRequest.getApprasieDressing());
+//			residence.setApprasieTotal(dtoRequest.getApprasieTotal());
+//			residence.setAdvice(dtoRequest.getAdvice());
+//			residenceService.appraiseResidence(residence);
+//		} else {
+//			dtoResponse.setCode("2");
+//		}
+//		return dtoResponse;
+//	}
+	
+	@ApiDescription("落户信息预约;负责人:luping")
+	@RequestMapping("appointment")
+	@ResponseBody
+	public DtoPublicResponse appointment(@Valid DtoResidenceAppointmentRequest dtoRequest) throws Exception {
+		DtoPublicResponse dtoResponse = new DtoPublicResponse();
+		return dtoResponse;
+	}
+	
+//	@ApiDescription("查询预约日期;负责人:luping;办理地点: 0 江岸区公安分局,1 二七街派出所 , 2 新村街派出所 , 3 丹水街派出所 ,4 后湖街派出所 , 5 谌家矶街派出所 ,6 百步亭派出所 , 7 塔子湖街派出所")
+//	@RequestMapping("queryAppointmentDate")
+//	@ResponseBody
+//	public DtoPublicResponseList<ResidenceAppointmentDate> queryAppointmentDate(@Valid DtoResidenceQueryAppointmentDateRequest dtoRequest) throws Exception {
+//		DtoPublicResponseList<ResidenceAppointmentDate> dtoResponse = new DtoPublicResponseList<>();
+//		List<ResidenceAppointmentDate> list=new ArrayList<ResidenceAppointmentDate>();
+//		for (int i = 0; i < 5; i++) {
+//			ResidenceAppointmentDate appointmentDate=new ResidenceAppointmentDate();
+//			Calendar one = Calendar.getInstance();
+//			appointmentDate.setDate(DateTool.dateToNormalString(ResidenceAppointmentDateUtil.addDateByWorkDay(one, i).getTime()));
+//			appointmentDate.setAmTime("08:30-10:00,09:00-10:30,09:30-11:00");
+//			appointmentDate.setPmTime("02:30-04:00,03:00-04:30,03:30-05:00");
+//			appointmentDate.setAmFlag(amFlag);
+//			list.add(appointmentDate);
+//		}
+//		
+//		return dtoResponse;
+//	}
+	
+}

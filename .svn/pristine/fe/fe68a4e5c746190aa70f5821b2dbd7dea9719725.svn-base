@@ -1,0 +1,558 @@
+package com.huaao.sunejwapi.api.test;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.huaao.sunejwapi.common.util.ClassUtils;
+import com.huaao.sunejwapi.common.util.DateTool;
+import com.huaao.sunejwapi.common.util.FileUtil;
+import com.huaao.sunejwapi.common.util.FuncTool;
+import com.huaao.sunejwapi.common.util.JsonDateValueProcessor;
+import com.huaao.sunejwapi.common.util.JsonFormatter;
+import com.huaao.sunejwapi.common.util.VelocityTool;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
+
+public class AutoDocument {
+
+	private static String dbfile = "e:/showdoc.db.php";
+	private static Set<String> filterApi = new HashSet<>();
+	private static Set<String> includeApi = new HashSet<>();
+	private static JsonConfig jsonConfig = new JsonConfig();  
+	
+
+	static{
+		filterApi.add("/apis-sun/systemtool/*"); 
+		 
+//		includeApi.add("/api/analysis/alertDoneLineChar.do");
+		
+		jsonConfig.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor());  
+	}
+	private static Connection c = null;
+	static {
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = DriverManager.getConnection("jdbc:sqlite:" + dbfile);
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+	}
+
+	public static void main(String[] args) {
+		
+		JSONObject jo = new JSONObject();
+		// 扫描包
+		List<Class> listApiClass = ClassUtils.scanPackage("com.huaao.sunejwapi.api.control");
+		TreeMap<String,Integer> pageCat = new TreeMap<>();
+		for (Class clazzApi : listApiClass) {
+			RequestMapping clazzRm = (RequestMapping) clazzApi.getAnnotation(RequestMapping.class);
+			if (clazzRm == null) {
+				continue;
+			}
+			ApiDescription clazzAd = (ApiDescription) clazzApi.getAnnotation(ApiDescription.class);
+			String catalog = "";
+			if (clazzAd != null) {
+				catalog = clazzAd.value();
+				pageCat.put(clazzAd.value(), null);
+			}
+			String mapApi = clazzRm.value()[0];
+			if (!mapApi.startsWith("/")) {
+				mapApi = "/" + mapApi;
+			}
+			// 反射API
+			Method[] methods = clazzApi.getMethods();
+			for (Method itemMethod : methods) {
+				RequestMapping rm = itemMethod.getAnnotation(RequestMapping.class);
+				ApiDescription ad = itemMethod.getAnnotation(ApiDescription.class);
+				if (rm != null) {
+					String tmp = rm.value()[0];
+					if (!tmp.startsWith("/")) {
+						tmp = "/" + rm.value()[0];
+					}
+					if (!tmp.endsWith(".action")) {
+						tmp = tmp + ".action";
+					}
+					String apiUrl = mapApi + tmp;
+					boolean filterFlag = false;
+					for(String filter : filterApi) {
+						if(filter.contains("*") && apiUrl.startsWith(filter.substring(0, filter.length()-1))){
+							filterFlag = true;
+						}
+						if(apiUrl.equals(filter)){
+							filterFlag = true;
+						}
+					}
+					if(includeApi.contains(apiUrl)){
+						filterFlag = false;
+					}
+					if(filterFlag){
+						continue;
+					}
+//					///////////////////////////////
+//					if(!"/api/user/updatePwd.do".equals(apiUrl)){
+//						continue;
+//					}
+//					///////////////////////////////
+					JSONObject apiJson = new JSONObject();
+
+					if (ad != null) {
+						apiJson.put("_desc", ad.value());
+					} else {
+						apiJson.put("_desc", "");
+					}
+					String method = "";
+					for (RequestMethod item : rm.method()) {
+						method += item.name();
+					}
+					if (StringUtils.isEmpty(method)) {
+						method = "POST GET";
+					}
+					apiJson.put("_method", method);
+
+					JSONObject requestJson = new JSONObject();
+					JSONObject responseJson = new JSONObject();
+
+					// 获取传入,传出参数
+					Class requestDto = itemMethod.getParameterTypes()[0];
+					Class responseDto = itemMethod.getReturnType();
+					
+					FuncTool.readDtoFiledToJson(requestDto, requestJson, null, null,false);
+					
+					Type fc = itemMethod.getGenericReturnType();
+					JSONObject demoData = null;
+					System.out.println(apiUrl);
+					if (fc instanceof ParameterizedType) // 【3】如果是泛型参数的类型
+					{
+						ParameterizedType pt = (ParameterizedType) fc;
+						Type t = pt.getActualTypeArguments()[0];
+						FuncTool.readDtoFiledToJson(responseDto, responseJson, (Class) t, null,false);
+						demoData = JSONObject.fromObject(FuncTool.createDemoData(responseDto, (Class) t,false),jsonConfig) ;
+					} else {
+						FuncTool.readDtoFiledToJson(responseDto, responseJson, null,null,false);
+						demoData = JSONObject.fromObject(FuncTool.createDemoData(responseDto, null,false),jsonConfig);
+					}
+
+					apiJson.put("_request", requestJson);
+					apiJson.put("_response", responseJson);
+					apiJson.put("_demoData", demoData.toString());
+					apiJson.put("_catalog", catalog);
+					jo.put(apiUrl, apiJson);
+				}
+			}
+		}
+		
+		String catId = "4";
+		//分类菜单
+		List<Map> listPage = sqliteQuery("select * from catalog where  parent_cat_id = '"+catId+"' order by s_number");
+		int s_number = 0;
+		for(String pageItem : pageCat.keySet()){
+			s_number++;
+			boolean flag = false;
+			for(Map pageMap : listPage){
+				if(pageItem.equals(String.valueOf(pageMap.get("cat_name"))) ){
+					flag = true; 
+					pageCat.put(pageItem, Integer.parseInt(String.valueOf(pageMap.get("cat_id"))));
+					break;
+				}
+			}
+			if(!flag){
+				updateSql("insert into catalog (cat_name,item_id,s_number,addtime,parent_cat_id,level) "
+						+ "values ('"+pageItem+"',1,"+s_number+",'1468970000',"+catId+",3)");
+				Map pageMap = sqliteQuery("select * from catalog where cat_name='"+pageItem+"' and parent_cat_id = '"+catId+"' order by s_number").get(0);
+				pageCat.put(pageItem, Integer.parseInt(String.valueOf(pageMap.get("cat_id"))));
+			}
+		}
+		
+		
+		for (Object key : jo.keySet()) {
+			Map<String, Object> map = new HashMap<>();
+			map.put("url", key.toString());
+			JSONObject apiJson = jo.getJSONObject(String.valueOf(key));
+
+			String[] desc = apiJson.getString("_desc").split(";");
+			String apiName = desc[0];
+			map.put("desc", desc);
+			map.put("method", apiJson.getString("_method"));
+			map.put("demoData", JsonFormatter.jsonFormatter(apiJson.getString("_demoData")).replace("\"", "&quot;"));
+
+			if (StringUtils.isEmpty(apiName) || StringUtils.isEmpty(apiJson.get("_catalog"))) {
+				System.out.println("=================" + key.toString() + " desc or catalog is null ");
+				continue;
+			} else {
+				System.out.println(key.toString() + " | " + apiName);
+			}
+
+			JSONObject requestJson = apiJson.getJSONObject("_request");
+			JSONObject responseJson = apiJson.getJSONObject("_response");
+			List<Map<String, String>> requestList = new ArrayList<>();
+			for (Object itemKey : requestJson.keySet()) {
+				JSONObject tmpjo = requestJson.getJSONObject(String.valueOf(itemKey));
+				Map<String, String> itemmap = new HashMap<>();
+				itemmap.put("name", String.valueOf(itemKey));
+				itemmap.put("notNull", tmpjo.getString("_notNull"));
+				itemmap.put("type", tmpjo.getString("_type"));
+				itemmap.put("desc", tmpjo.getString("_desc"));
+				requestList.add(itemmap);
+			}
+			map.put("requestList", requestList);
+
+			List<Map<String, String>> responseList = new ArrayList<>();
+			for (Object itemKey : responseJson.keySet()) {
+				JSONObject tmpjo = responseJson.getJSONObject(String.valueOf(itemKey));
+				Map<String, String> itemmap = new HashMap<>();
+				itemmap.put("name", String.valueOf(itemKey));
+				itemmap.put("type", tmpjo.getString("_type"));
+				itemmap.put("desc", tmpjo.getString("_desc"));
+				responseList.add(itemmap);
+			}
+			map.put("responseList", responseList);
+
+			String content = VelocityTool.generate("com/huaao/sunejwapi/api/test/api_template.vm", map);
+			List<Map> listOnePage = sqliteQuery("select * from page where  cat_id = '"+pageCat.get(apiJson.get("_catalog").toString())+"' and page_title='"+apiName+"'");
+			String sqlUpdate = null;
+			if(listOnePage.size() > 0){
+				sqlUpdate = "update page set author_uid=\"{1}\",author_username=\"{2}\", item_id=\"{3}\" , cat_id=\"{4}\" ,page_title=\"{5}\" ,page_content=\"{6}\",s_number=\"{7}\",addtime=\"{8}\" where page_id=\"{0}\" ";
+				sqlUpdate = MessageFormat.format(sqlUpdate, listOnePage.get(0).get("page_id"),1,"admin",1,pageCat.get(apiJson.get("_catalog").toString()),apiName,content,1,"1468970000");
+			}else{
+				sqlUpdate = "insert into page (author_uid,author_username,item_id,cat_id,page_title,page_content,s_number,addtime)values (\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\")";
+				sqlUpdate = MessageFormat.format(sqlUpdate, 1,"admin",1,pageCat.get(apiJson.get("_catalog").toString()),apiName,content,1,"1468970000");
+			}
+			updateSql(sqlUpdate);
+			// System.out.println(content);
+		}
+		
+//		//打印比较结果
+		String logPath = "E:/createDoc/sun/";
+		List<String> files = FileUtil.getAllFile(logPath);
+		Collections.sort(files);
+		Collections.reverse(files);
+		if(files.size() > 0 ){
+			String content = FileUtil.loadFile(files.get(0), "utf-8") ;
+			JSONObject oldJo = JSONObject.fromObject(content);
+			Set<String> oldList = getJsonKey(null,oldJo);
+			Set<String> newList = getJsonKey(null,jo);
+			Set<String> newListBack = getJsonKey(null,jo);
+			Iterator<String> newIt = newList.iterator();
+			while(newIt.hasNext()){
+				String item = newIt.next();
+				if(oldList.contains(item)){
+					newIt.remove();
+				}
+			}
+			Iterator<String> oldIt = oldList.iterator();
+			while(oldIt.hasNext()){
+				String item = oldIt.next();
+				if(newListBack.contains(item)){
+					oldIt.remove();
+				}
+			}
+			
+			Set<String> newApiUrl = new HashSet<>();
+			for(String item : newList){
+				if(item.endsWith(".action")){
+					newApiUrl.add(item);
+				}
+			}
+			for(String item : newApiUrl){
+				Iterator<String> itr = newList.iterator();
+				while(itr.hasNext()){
+					if(itr.next().contains(item)){
+						itr.remove();
+					}
+				}
+			}
+			
+			Set<String> oldApiUrl = new HashSet<>();
+			for(String item : oldList){
+				if(item.endsWith(".action")){
+					oldApiUrl.add(item);
+				}
+			}
+			for(String item : oldApiUrl){
+				Iterator<String> itr = oldList.iterator();
+				while(itr.hasNext()){
+					if(itr.next().contains(item)){
+						itr.remove();
+					}
+				}
+			}
+			
+			StringBuffer sbLog = new StringBuffer();
+			sbLog.append("新增的接口\r\n");
+			for(String item : newApiUrl){
+				sbLog.append(" 1. "+item + "("+jo.getJSONObject(item).getString("_desc").split(";")[0]+")\r\n");
+			}
+			sbLog.append(" \r\n");
+			sbLog.append("新增的参数\r\n");
+			for(String item : newList){
+				if(item.endsWith("_request") || item.endsWith("_response")){
+					continue;
+				}
+				item = item.replace("_request", "入参");
+				item = item.replace("_response", "出参");
+				item = item.replace("-", " - ");
+				sbLog.append(" 1. "+item+" \r\n");
+			}
+			
+			sbLog.append(" \r\n");
+			sbLog.append("删除的接口\r\n");
+			for(String item : oldApiUrl){
+				sbLog.append( " 1. "+item + "("+oldJo.getJSONObject(item).getString("_desc").split(";")[0]+")\r\n");
+			}
+			sbLog.append(" \r\n");
+			sbLog.append("删除的参数\r\n");
+			for(String item : oldList){
+				if(item.endsWith("_request") || item.endsWith("_response")){
+					continue;
+				}
+				item = item.replace("_request", "入参");
+				item = item.replace("_response", "出参");
+				item = item.replace("-", " - ");
+				sbLog.append( " 1. "+item+" \r\n");
+			}
+			System.out.println("========================");
+			System.out.println(sbLog);
+		}
+		
+		FileUtil.saveFile(logPath+DateTool.formatDateTime(new Date()).replace(":", "")+".log", jo.toString());
+
+	}
+
+	private static void updateSql(String sql){
+	    Statement stmt = null;
+	    try {
+//	    	System.out.println(sql);
+ 	      stmt = c.createStatement();
+	      stmt.executeUpdate(sql);
+	      stmt.close();
+	    } catch ( Exception e ) {
+	      System.err.println( e.getClass().getName() + ": " + e.getMessage() );
+	    }
+	}
+	
+	private static List<Map> sqliteQuery(String sql) {
+		List<Map> list = new ArrayList<>();
+		Statement stmt = null;
+		try {
+//			System.out.println(sql);
+			Class.forName("org.sqlite.JDBC");
+			stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			int count =rs.getMetaData().getColumnCount();
+			Set<String> columns = new HashSet<>();
+			for(int i=1; i<=count; i++){
+				columns.add(rs.getMetaData().getColumnLabel(i));
+			}
+			while (rs.next()) {
+				Map<String,Object> map = new HashMap<>();
+				for(String column : columns){
+					map.put(column, rs.getObject(column));
+				}
+				list.add(map);
+			}
+			rs.close();
+			stmt.close();
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}
+		return list;
+	}
+	private static Set<String> getJsonKey(String head,JSONObject jsonObj){
+		Set<String> filterKey = new HashSet<>();
+		filterKey.add("_desc");
+		filterKey.add("_type");
+		filterKey.add("_notNull");
+		filterKey.add("_catalog");
+		filterKey.add("_method");
+		filterKey.add("_demoData");
+		
+		Set<String> keys = new TreeSet();
+        Set<Entry<String, Object>> set =  jsonObj.entrySet();
+        Iterator<Entry<String, Object>> iter = set.iterator();
+        while (iter.hasNext()) {
+            Entry<String, Object> entry = iter.next();
+            String key = entry.getKey();
+            if(filterKey.contains(key)){
+            	continue;
+            }
+            Object value = entry.getValue();
+
+            keys.add(head==null?key:head+key);
+            //判断value类型
+            if (value instanceof JSONObject) {
+            	Set<String> list = getJsonKey(head==null?key+"-":head+key+"-", (JSONObject) value);
+                keys.addAll(list);
+            }else if (value instanceof JSONArray) {
+                JSONArray jsonArray = (JSONArray) value;
+                if (jsonArray.size()!=0) {
+                    Object obj = jsonArray.get(0);
+                    //对array中的类型进行判断
+                    if (obj instanceof JSONObject) {
+                    	Set<String> list = getJsonKey(head==null?key+"-":head+key+"-", (JSONObject)jsonArray.get(0));
+                        keys.addAll(list);
+                    }else{
+                        keys.add(head==null?key:head+key);
+                    }
+                }
+            }
+        }
+        return keys;
+    } 
+	
+
+//	public static JSONObject readDtoDemoToJson(Class clazz, Class genClass ) {
+//		JSONObject jo = new JSONObject();
+//		readDtoDemoToJson(clazz,jo, genClass);
+//		return jo;
+//	}
+	
+////	private static int count = 0; //调试专用
+//	public static void readDtoDemoToJson(Class clazz, JSONObject dataJson, Class genClass ) {
+////		count++; if(count > 2000){ return ; } //调试专用
+////		if(genClass != null){ System.out.println(clazz.toString() + "|" +genClass.toString());
+////		}else{ System.out.println(clazz.toString() ); }
+//		
+// 		List<Field> listFileds = new ArrayList<>();
+//		getClassField(clazz, listFileds);
+//		for (Field filed : listFileds) {
+////			System.out.println(filed.getName());
+//			if(FILTER_FILED.contains(filed.getName())){
+//				continue;
+//			}
+//			filed.setAccessible(true);
+//			if (!String.class.equals(filed.getType()) && !Integer.class.equals(filed.getType())
+//					&& !List.class.equals(filed.getType()) && !Long.class.equals(filed.getType()) 
+//					&& !Date.class.equals(filed.getType()) && !Byte.class.equals(filed.getType())
+//					&& !"T".equals(filed.getGenericType().toString()) && !Boolean.class.equals(filed.getType()) ) {
+//				try {
+//					JSONObject filedJson = new JSONObject();
+//					readDtoDemoToJson(filed.getType(), filedJson, null);
+//					dataJson.put(filed.getName(), filedJson);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//			else if (List.class.equals(filed.getType()) || "T".equals(filed.getGenericType().toString())) {
+//				JSONArray arrayJson = new JSONArray();
+//				JSONObject dj = new JSONObject();
+//				Type fc = filed.getGenericType();
+//				Class c = null;
+//				try {
+//					ParameterizedType pt = (ParameterizedType) fc;
+//					c = (Class)pt.getActualTypeArguments()[0];
+//				} catch (Exception e) {
+// 				}
+//				if(genClass != null && !String.class.equals(genClass) && !Boolean.class.equals(genClass)&& !Long.class.equals(genClass)&& !Date.class.equals(genClass)){
+//					readDtoDemoToJson(genClass, dj,null );
+//				}else if(c != null){
+//					if(String.class.equals(c)){
+//						ApiDemoData filedDemoData = filed.getAnnotation(ApiDemoData.class);
+//						if (filedDemoData != null){
+//							String[] str = filedDemoData.value().split(";");
+//							for(String item : str){
+//								arrayJson.add(item);
+//							}
+//						}
+//					}else if(Integer.class.equals(c)){
+//						ApiDemoData filedDemoData = filed.getAnnotation(ApiDemoData.class);
+//						if (filedDemoData != null){
+//							String[] str = filedDemoData.value().split(";");
+//							for(String item : str){
+//								arrayJson.add(Integer.parseInt(item) );
+//							}
+//						}
+//					}else if(List.class.equals(c)){
+//						ApiDemoData filedDemoData = filed.getAnnotation(ApiDemoData.class);
+//						if (filedDemoData != null){
+//							try {
+//								JSONArray jsa =  JSONArray.fromObject(filedDemoData.value());
+//								arrayJson.add(jsa );
+//							} catch (Exception e) {
+//								e.printStackTrace();
+//							}
+//						}
+//					}
+//					else{
+//						readDtoDemoToJson(c, dj,null );
+//					}
+//					
+//				}
+//				if (dj.size() != 0) {
+//					arrayJson.add(dj);
+//				}
+//				dataJson.put(filed.getName(), arrayJson);
+//				
+//				if("T".equals(filed.getGenericType().toString())){
+//					dataJson.put(filed.getName(), dj);
+//				}
+//			} else{
+//				ApiDemoData filedDemoData = filed.getAnnotation(ApiDemoData.class);
+//				if (filedDemoData != null && !StringUtils.isEmpty(filedDemoData.value())) {
+//					if(Integer.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),Integer.parseInt( filedDemoData.value()));
+//					}else if(Double.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),Double.parseDouble( filedDemoData.value()));
+//					}else if(Float.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),Float.parseFloat( filedDemoData.value()));
+//					}else if(Date.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),Long.parseLong( filedDemoData.value()));
+//					}else if(Boolean.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),true);
+//					}else if(Long.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),Long.parseLong( filedDemoData.value()));
+//					}else if(Byte.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),Byte.parseByte( filedDemoData.value()));
+//					}
+//					else{
+//						dataJson.put(filed.getName(), filedDemoData.value());
+//					}
+//					
+//				}else{
+//					if(String.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),"");
+//					}
+//					else if(Integer.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),1);
+//					}else if(Double.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),1);
+//					}else if(Float.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),1);
+//					}else if(Date.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),DemoData.STMAP);
+//					}else if(Boolean.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),true);
+//					}else if(Long.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),DemoData.STMAP);
+//					}else if(Byte.class.equals(filed.getType())){
+//						dataJson.put(filed.getName(),1);
+//					}
+//				}
+//			}
+//		}
+//	}
+}

@@ -1,0 +1,21 @@
+package com.huaao.sunejwapi.api.dto.residence;
+
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicRequest;
+import com.huaao.sunejwapi.common.web.ApiDemoData;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+public class DtoResidenceQueryAppointmentDateRequest extends DtoPublicRequest{
+
+	@ApiDescription("办理地点: 0 江岸区公安分局,1 二七街派出所 , 2 新村街派出所 , 3 丹水街派出所 ,4 后湖街派出所 , 5 谌家矶街派出所 ,6 百步亭派出所 , 7 塔子湖街派出所")
+	@ApiDemoData("0")
+	private Integer addressType ;
+
+	public Integer getAddressType() {
+		return addressType;
+	}
+
+	public void setAddressType(Integer addressType) {
+		this.addressType = addressType;
+	} 
+	
+}

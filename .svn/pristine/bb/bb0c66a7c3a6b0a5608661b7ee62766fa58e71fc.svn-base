@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+
+<!-- mvn mybatis-generator:generate 
+	<classPathEntry location="/Users/sujin/work/repository/mysql/mysql-connector-java/5.1.21/mysql-connector-java-5.1.21.jar"/> 
+	-->
+    <context id="mysqlgenerator" targetRuntime="MyBatis3">
+		
+        <!-- domain 序列化 -->
+        <plugin type="org.mybatis.generator.plugins.SerializablePlugin">
+            <!-- 必须实现Serializable接口 -->
+            <property name="suppressJavaInterface" value="false"/>
+        </plugin>
+
+		<plugin type="com.xxg.mybatis.plugins.MySQLLimitPlugin" />
+		
+        <!-- 是否生成注释，为false时，生成注释 -->
+        <commentGenerator>
+            <property name="suppressAllComments" value="false"/>
+        </commentGenerator>
+       
+         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://121.43.33.181:3306/sun_ejingwu" userId="root"
+                        password="huaaotest">
+            <property name="characterEncoding" value="utf-8"/>
+            <property name="useUnicode" value="true"/>
+        </jdbcConnection>
+
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+
+        <!-- generate Model -->
+        <javaModelGenerator targetPackage="com.huaao.sunejwapi.dao"
+                            targetProject="src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- generate xml -->
+        <sqlMapGenerator targetPackage="com.huaao.sunejwapi.mapper"
+                         targetProject="src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- generate Mapper -->
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.huaao.sunejwapi.mapper" targetProject="src/main/java/">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        
+      <!--   
+       
+       -->
+      <table  tableName="sps_residence" > 
+        
+      </table>
+      
+      <table  tableName="sps_s_dictionary" > 
+        <columnOverride column="status" javaType="Integer" />
+      </table>
+        
+      <table  tableName="jw_user" > 
+        <columnOverride column="type" javaType="Integer" />
+        <columnOverride column="status" javaType="Integer" />
+        <columnOverride column="useridentity" javaType="Integer" />
+        <columnOverride column="gender" javaType="Integer" />
+        <columnOverride column="residenttype" javaType="Integer" />
+        <columnOverride column="dt_type" javaType="Integer" />
+      </table>
+          
+    </context>
+</generatorConfiguration>

@@ -1,0 +1,10 @@
+contentPath=http://www.huaaotech.tech/api/html/getContent.do?id=
+checktoken=true
+appId=5oApgofFGz6AVA9QksgiB8
+appKey=YAuWs0zlY09dzisXlBhjx
+appSecret=9dcZMRVp997rMAIHRC25O7
+masterSecret=zRSQTItODJ9fQUJy5vRRT2
+uploadPath=/alidata/server/tomcat-01/upload/
+dict.depttype=4028876d5a7ed06f015a7ed33c080000
+qrcodePath=http://www.huaaotech.tech/api/sdk/queryUserRecord.do?recordId=
+emsPayAmount=1

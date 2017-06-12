@@ -1,0 +1,41 @@
+package com.huaao.sunejwapi.api.dto.residence;
+
+import java.util.Date;
+
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicRequest;
+import com.huaao.sunejwapi.common.web.ApiDemoData;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+public class DtoResidenceAppointmentRequest extends DtoPublicRequest{
+	
+	@ApiDescription("落户表数据ID")
+	@ApiDemoData("12101")
+    private Integer id;
+
+	@ApiDescription("预约日期")
+	@ApiDemoData("2017-05-26")
+    private Date appointmentDate;
+
+	@ApiDescription("预约时段 0 上午， 1 下午")
+	@ApiDemoData("0")
+    private Integer appointmentTime;
+	
+	public Date getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    
+    public Integer getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    
+    public void setAppointmentTime(Integer appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+}

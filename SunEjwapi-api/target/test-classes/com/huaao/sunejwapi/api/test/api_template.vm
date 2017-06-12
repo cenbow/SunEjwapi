@@ -1,0 +1,39 @@
+    
+**简要描述：** 
+
+#foreach($item in $desc)
+- $item
+#end
+
+**请求URL：** 
+- `  接口地址 URL:http://121.43.33.181$url `
+
+**请求方式：**
+- $method
+
+**参数：** 
+
+|参数名|必选|类型|说明|
+|:----    |:---|:----- |-----   |
+#foreach($item in $requestList)
+|$item.name |$item.notNull  |$item.type |$item.desc   |
+#end
+
+**返回参数说明** 
+
+|参数名|类型|说明|
+|:-----  |:-----|-----|
+#foreach($item in $responseList)
+|$item.name  |$item.type |$item.desc   |
+#end
+
+ **返回示例**
+
+``` 
+  $demoData
+```
+
+
+ **备注** 
+
+- 更多返回错误代码请看首页的错误代码描述

@@ -1,0 +1,215 @@
+package com.huaao.sunejwapi.api.dto.residence;
+
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicRequest;
+import com.huaao.sunejwapi.common.web.ApiDemoData;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+public class DtoResidenceCreateRequest extends DtoPublicRequest{
+	
+	@ApiDescription("ID ,不填时为创建，否则为更新")
+	@ApiDemoData("12101")
+    private Integer id;
+
+	@ApiDescription("申请人姓名")
+	@ApiDemoData("")
+	@Length(min=1,max=15,message="名称长度在1-15个字之间")
+    private String name;
+
+	@ApiDescription("申请人身份证")
+	@ApiDemoData("")
+	@Pattern(regexp="(\\d{14}[0-9a-zA-Z])|(\\d{17}[0-9a-zA-Z])",message="身份证格式不正确")
+    private String idcard;
+
+	@ApiDescription("申请人电话")
+	@ApiDemoData("")
+	@Length(min=8,max=11,message="电话号码为8-11位数字")
+    private String cellphone;
+
+	@ApiDescription("申请类型,查数据字典接口,落户申报类型:residenceType")
+	@ApiDemoData("1")
+    private Integer catelog;
+
+	@ApiDescription("登记表照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsRegister;
+
+	@ApiDescription("身份证照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsIdcard;
+
+	@ApiDescription("户口薄照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsResidence;
+
+	@ApiDescription("房权证照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsHouse;
+
+	@ApiDescription("劳动合同照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsJob;
+
+	@ApiDescription("社会保险照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsInsurance;
+
+	@ApiDescription("营业执照照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsLicence;
+
+	@ApiDescription("随迁人员照片 多个逗号分隔 ")
+	@ApiDemoData("")
+    private String imgsFamily;
+
+	@ApiDescription("状态：0 保存，1 提交 ")
+	@ApiDemoData("1")
+    private Integer status;
+ 
+ 
+    public Integer getId() {
+        return id;
+    }
+
+    
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    
+     
+
+    
+    public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getIdcard() {
+        return idcard;
+    }
+
+    
+    public void setIdcard(String idcard) {
+        this.idcard = idcard == null ? null : idcard.trim();
+    }
+
+    
+    public String getCellphone() {
+        return cellphone;
+    }
+
+    
+    public void setCellphone(String cellphone) {
+        this.cellphone = cellphone == null ? null : cellphone.trim();
+    }
+
+    
+    public Integer getCatelog() {
+        return catelog;
+    }
+
+    
+    public void setCatelog(Integer catelog) {
+        this.catelog = catelog;
+    }
+
+    
+    public String getImgsRegister() {
+        return imgsRegister;
+    }
+
+    
+    public void setImgsRegister(String imgsRegister) {
+        this.imgsRegister = imgsRegister == null ? null : imgsRegister.trim();
+    }
+
+    
+    public String getImgsIdcard() {
+        return imgsIdcard;
+    }
+
+    
+    public void setImgsIdcard(String imgsIdcard) {
+        this.imgsIdcard = imgsIdcard == null ? null : imgsIdcard.trim();
+    }
+
+    
+    public String getImgsResidence() {
+        return imgsResidence;
+    }
+
+    
+    public void setImgsResidence(String imgsResidence) {
+        this.imgsResidence = imgsResidence == null ? null : imgsResidence.trim();
+    }
+
+    
+    public String getImgsHouse() {
+        return imgsHouse;
+    }
+
+    
+    public void setImgsHouse(String imgsHouse) {
+        this.imgsHouse = imgsHouse == null ? null : imgsHouse.trim();
+    }
+
+    
+    public String getImgsJob() {
+        return imgsJob;
+    }
+
+    
+    public void setImgsJob(String imgsJob) {
+        this.imgsJob = imgsJob == null ? null : imgsJob.trim();
+    }
+
+    
+    public String getImgsInsurance() {
+        return imgsInsurance;
+    }
+
+    
+    public void setImgsInsurance(String imgsInsurance) {
+        this.imgsInsurance = imgsInsurance == null ? null : imgsInsurance.trim();
+    }
+
+    
+    public String getImgsLicence() {
+        return imgsLicence;
+    }
+
+    
+    public void setImgsLicence(String imgsLicence) {
+        this.imgsLicence = imgsLicence == null ? null : imgsLicence.trim();
+    }
+
+    
+    public String getImgsFamily() {
+        return imgsFamily;
+    }
+
+    
+    public void setImgsFamily(String imgsFamily) {
+        this.imgsFamily = imgsFamily == null ? null : imgsFamily.trim();
+    }
+
+    
+    public Integer getStatus() {
+        return status;
+    }
+
+    
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+ 
+}

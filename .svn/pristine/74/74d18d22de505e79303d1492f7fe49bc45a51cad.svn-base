@@ -1,0 +1,8 @@
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://sun.huaaotech.space:3306/sun_ejingwu?useUnicode=true&characterEncoding=utf8
+jdbc.username=sun
+jdbc.password=aC3QdxNB
+jdbc.initialSize=1
+jdbc.maxActive=50
+jdbc.minIdle=10
+jdbc.maxWait=60000

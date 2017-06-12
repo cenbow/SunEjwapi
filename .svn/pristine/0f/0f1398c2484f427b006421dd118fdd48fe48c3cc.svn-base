@@ -1,0 +1,99 @@
+package com.huaao.sunejwapi.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.huaao.sunejwapi.dao.SpsResidence;
+import com.huaao.sunejwapi.dao.SpsResidenceExample;
+import com.huaao.sunejwapi.mapper.SpsResidenceMapper;
+@Service
+public class ResidenceService {
+	@Autowired
+	private SpsResidenceMapper residenceMapper;
+	
+	/*********lihao*********************************/
+	
+	public String createAndUpdate(SpsResidence spsResidence) throws Exception{
+		if(spsResidence.getId() == null || spsResidence.getId() == 0){
+			residenceMapper.insertSelective(spsResidence);
+		}else{
+			residenceMapper.updateByPrimaryKey(spsResidence);
+		}
+		return String.valueOf(spsResidence.getId());
+	}
+	
+	public List<SpsResidence> query(Integer uid) throws Exception{
+		SpsResidenceExample example = new SpsResidenceExample();
+		example.createCriteria().andCreatorIdEqualTo(uid);
+		example.setOrderByClause(" create_time desc");
+		return residenceMapper.selectByExample(example);
+	}
+	
+	public void confirmDone(Integer residenceId){
+		SpsResidence sr = new SpsResidence();
+		sr.setId(residenceId);
+		sr.setStatus(5);
+		residenceMapper.updateByPrimaryKeySelective(sr);
+	}
+	
+	
+	/*********yuhai*********************************/
+	
+	
+	
+	
+	
+	
+	
+	/*********fuwei*********************************/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*********luping*********************************/
+//	
+//	/**
+//	 * 落户评价.
+//	 * @param alertApraise
+//	 * @throws Exception
+//	 */
+//	public void appraiseResidence(SpsResidence spsResidence) throws Exception {
+//		Integer id = spsResidence.getId();
+//		// 判断是否是待评价
+//		SpsResidence residence = residenceMapper.selectByPrimaryKey(id);
+//		if (residence == null) {
+//			throw new Exception("数据不存在");
+//		}
+//		if (residence != null && residence.getApprasieTotal() != null) {
+//			throw new Exception("已经评价");
+//		}
+//		residenceMapper.updateByPrimaryKeySelective(residence);
+//	}
+//	
+//	/**
+//	 * 查询该时间内已经预约时间段
+//	 * 
+//	 * @param spsResidence
+//	 * @throws Exception
+//	 */
+//	public void queryResidenceAppointmentTime(String date) throws Exception {
+//		SpsResidence residence = residenceMapper.selectByPrimaryKey(id);
+//		if (residence == null) {
+//			throw new Exception("数据不存在");
+//		}
+//		if (residence != null && residence.getApprasieTotal() != null) {
+//			throw new Exception("已经评价");
+//		}
+//		residenceMapper.updateByPrimaryKeySelective(residence);
+//	}
+		
+	
+	
+}

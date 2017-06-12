@@ -1,0 +1,23 @@
+CREATE TABLE `sys_user_audit` (
+  `id` varchar(32) NOT NULL,
+  `user_id` varchar(32) DEFAULT NULL COMMENT '用户ID',
+  `dept_id` varchar(32) DEFAULT NULL COMMENT '单位ID',
+  `jobs_id` varchar(32) DEFAULT NULL COMMENT '人员类型',
+  `type` varchar(32) DEFAULT NULL COMMENT 'backUser,foreUser,superAdmin',
+  `email` varchar(255) DEFAULT NULL COMMENT '邮箱地址',
+  `phone` varchar(255) DEFAULT NULL COMMENT '手机号',
+  `realname` varchar(255) DEFAULT NULL COMMENT '用户真实名称,实名认证用到',
+  `user_name` varchar(255) DEFAULT NULL COMMENT '用户登录名,暂时没有使用到,全部通过手机登录',
+  `sex` tinyint(3) DEFAULT NULL COMMENT '性别0女1男',
+  `img` varchar(255) DEFAULT NULL COMMENT '头像链接',
+  `curr_address` varchar(255) DEFAULT NULL COMMENT '户籍地',
+  `address` varchar(255) DEFAULT NULL COMMENT '地址',
+  `live_now` varchar(255) DEFAULT NULL COMMENT '当前居住地',
+  `policeman_code` varchar(255) DEFAULT NULL COMMENT '警官号',
+  `id_card` varchar(255) DEFAULT NULL COMMENT '身份证号',
+  `idcard_img1` varchar(255) DEFAULT NULL COMMENT '证件图片链接1',
+  `idcard_img2` varchar(255) DEFAULT NULL COMMENT '证件图片链接1',
+  `version` tinyint(3) DEFAULT NULL COMMENT '用户信息版本',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户认证记录表';

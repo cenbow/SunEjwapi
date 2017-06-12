@@ -1,0 +1,72 @@
+package com.huaao.sunejwapi.api.control;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.huaao.sunejwapi.api.dto.pub.DtoCreateNew;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicRequest;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicResponse;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicResponseList;
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicResponseObj;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceAppointmentRequest;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceAppraiseRequest;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceCreateRequest;
+import com.huaao.sunejwapi.api.dto.residence.DtoResidenceQueryAppointmentDateRequest;
+import com.huaao.sunejwapi.api.dto.residence.ResidenceAppointmentDate;
+import com.huaao.sunejwapi.api.dto.residence.ResidenceInfo;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+
+@ApiDescription("落户信息")
+@Controller
+@RequestMapping("apis-sun/residence")
+public class ResidenceController {
+	
+	@ApiDescription("落户信息查询;负责人:lihao")
+	@RequestMapping("query")
+	@ResponseBody
+	public DtoPublicResponseList<ResidenceInfo> query(@Valid DtoPublicRequest dtoRequest) throws Exception {
+		DtoPublicResponseList dtoResponse = new DtoPublicResponseList<>();
+		dtoResponse.initDemoData(ResidenceInfo.class);
+		return dtoResponse;
+	}
+	
+	@ApiDescription("落户信息创建;负责人:lihao")
+	@RequestMapping("createAndUpdate")
+	@ResponseBody
+	public DtoPublicResponseObj<DtoCreateNew> createAndUpdate(@Valid DtoResidenceCreateRequest dtoRequest) throws Exception {
+		DtoPublicResponseObj dtoResponse = new DtoPublicResponseObj<>();
+		dtoResponse.initDemoData(DtoCreateNew.class);
+		return dtoResponse;
+	}
+	
+	@ApiDescription("落户信息评价;负责人:lihao")
+	@RequestMapping("appraise")
+	@ResponseBody
+	public DtoPublicResponse appraise(@Valid DtoResidenceAppraiseRequest dtoRequest) throws Exception {
+		DtoPublicResponse dtoResponse = new DtoPublicResponse();
+		dtoResponse.initDemoData(DtoCreateNew.class);
+		return dtoResponse;
+	}
+	
+	@ApiDescription("落户信息预约;负责人:lihao")
+	@RequestMapping("appointment")
+	@ResponseBody
+	public DtoPublicResponse appointment(@Valid DtoResidenceAppointmentRequest dtoRequest) throws Exception {
+		DtoPublicResponse dtoResponse = new DtoPublicResponse();
+		return dtoResponse;
+	}
+	
+	@ApiDescription("查询预约日期;负责人:lihao")
+	@RequestMapping("queryAppointmentDate")
+	@ResponseBody
+	public DtoPublicResponseList<ResidenceAppointmentDate> queryAppointmentDate(@Valid DtoResidenceQueryAppointmentDateRequest dtoRequest) throws Exception {
+		DtoPublicResponseList<ResidenceAppointmentDate> dtoResponse = new DtoPublicResponseList<>();
+		dtoResponse.initDemoData(ResidenceAppointmentDate.class);
+		return dtoResponse;
+	}
+	
+}

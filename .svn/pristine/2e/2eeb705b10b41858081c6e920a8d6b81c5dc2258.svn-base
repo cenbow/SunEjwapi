@@ -1,0 +1,41 @@
+package com.huaao.sunejwapi.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class ResidenceService {
+
+	/*********lihao*********************************/
+	
+	
+	
+	
+	
+	
+	
+	
+	/*********yuhai*********************************/
+	
+	
+	
+	
+	
+	
+	
+	/*********fuwei*********************************/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*********luping*********************************/
+	
+	
+	
+	
+	
+}

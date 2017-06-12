@@ -1,0 +1,27 @@
+ALTER TABLE `jw_meeting_room` ADD COLUMN `dept_id` VARCHAR(32) NOT NULL COMMENT '部门ID' AFTER `period`;
+ALTER TABLE `jw_meeting_room` ADD COLUMN `img` VARCHAR(128) NULL COMMENT '背景图片地址' AFTER `dept_id`;
+/* picture path : /alidata/server/tomcat-01/upload/images/meetingroom */
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('5', '1', '调解室', '调解室', '910055310585', 'http://www.ainemo.com/page/third/TX0BLKK1', '8a2b2a045a943267015a947500a7000d', '4028876d5a3bab8d015a3bab92330000', '2017-02-03 00:00:00', '4028876d5a3bab8d015a3bab92330000', '2017-02-03 00:00:00');
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('6', '2', '警民互动室', '警民互动室', '910055157813', 'http://www.ainemo.com/page/third/X5QY3C7G', '8a2b2a045a943267015a947500a7000d', '4028876d5a3bab8d015a3bab92330000', '2017-02-05 00:00:00', '4028876d5a3bab8d015a3bab92330000', '2017-02-05 00:00:00');
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('7', '3', '民警热线', '民警热线', '910005199636', 'http://www.ainemo.com/page/third/B6FGWV4J', '8a2b2a045a943267015a947500a7000d', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:53:42', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:53:49');
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('8', '3', '社区热线', '社区热线', '910008872101', 'http://www.ainemo.com/page/third/R9N6V1T3', '8a2b2a045a943267015a947500a7000d', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:54:29', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:54:36');
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('9', '1', '调解室', '调解室', '910055310585', 'http://www.ainemo.com/page/third/TX0BLKK1', '8a2b2a045a943267015a9476168e000e', '4028876d5a3bab8d015a3bab92330000', '2017-02-03 00:00:00', '4028876d5a3bab8d015a3bab92330000', '2017-02-03 00:00:00');
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('10', '2', '警民互动室', '警民互动室', '910055157813', 'http://www.ainemo.com/page/third/X5QY3C7G', '8a2b2a045a943267015a9476168e000e', '4028876d5a3bab8d015a3bab92330000', '2017-02-05 00:00:00', '4028876d5a3bab8d015a3bab92330000', '2017-02-05 00:00:00');
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('11', '3', '民警热线', '民警热线', '910005199636', 'http://www.ainemo.com/page/third/B6FGWV4J', '8a2b2a045a943267015a9476168e000e', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:53:42', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:53:49');
+INSERT INTO `jw_meeting_room` (`id`, `type`, `room_name`, `room_info`, `room_id`, `room_url`, `dept_id`, `creator_id`, `create_time`, `updater_id`, `update_time`) VALUES ('12', '3', '社区热线', '社区热线', '910008872101', 'http://www.ainemo.com/page/third/R9N6V1T3', '8a2b2a045a943267015a9476168e000e', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:54:29', '4028876d5a3bab8d015a3bab92330000', '2017-03-03 16:54:36');
+UPDATE `jw_meeting_room` SET `dept_id`='8a2b2a045a943267015a945179770004' WHERE `id`='1';
+UPDATE `jw_meeting_room` SET `dept_id`='8a2b2a045a943267015a945179770004' WHERE `id`='2';
+UPDATE `jw_meeting_room` SET `dept_id`='8a2b2a045a943267015a945179770004' WHERE `id`='3';
+UPDATE `jw_meeting_room` SET `dept_id`='8a2b2a045a943267015a945179770004' WHERE `id`='4';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/tiaojie.png' WHERE `id`='1';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/jingminhudong.png' WHERE `id`='10';
+UPDATE `jw_meeting_room` SET `room_name`='内部会议室', `room_info`='内部会议室', `img`='http://www.huaaotech.tech/upload/images/meetingroom/neibuhuiyi.png' WHERE `id`='11';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/shequrexian.png' WHERE `id`='12';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/jingminhudong.png' WHERE `id`='2';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/shequrexian.png' WHERE `id`='4';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/shequrexian.png' WHERE `id`='8';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/tiaojie.png' WHERE `id`='9';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/tiaojie.png' WHERE `id`='5';
+UPDATE `jw_meeting_room` SET `img`='http://www.huaaotech.tech/upload/images/meetingroom/jingminhudong.png' WHERE `id`='6';
+UPDATE `jw_meeting_room` SET `room_name`='内部会议室', `room_info`='内部会议室', `img`='http://www.huaaotech.tech/upload/images/meetingroom/neibuhuiyi.png' WHERE `id`='3';
+UPDATE `jw_meeting_room` SET `room_name`='内部会议室', `room_info`='内部会议室', `img`='http://www.huaaotech.tech/upload/images/meetingroom/neibuhuiyi.png' WHERE `id`='7';

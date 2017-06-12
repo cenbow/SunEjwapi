@@ -1,0 +1,2 @@
+/* 下午2:00:00 120.26.169.207 standard_ejingwu */
+ALTER TABLE `standard_ejingwu`.`jw_alert`  CHANGE COLUMN `status` `status` TINYINT(3) NOT NULL COMMENT '0-未处理,1-已完成,2-已委派(选配),3-已协作(选配),4-已上报(选配),5-已删除,6-待评价（已解除）' ;

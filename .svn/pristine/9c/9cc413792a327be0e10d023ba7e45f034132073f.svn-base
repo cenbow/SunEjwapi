@@ -1,0 +1,32 @@
+package com.huaao.sunejwapi.api.control;
+
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicResponse;
+import com.huaao.sunejwapi.common.util.DateTool;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+import com.huaao.sunejwapi.service.ResidenceService;
+
+@Controller
+@RequestMapping("apis-sun/systemtool")
+public class SystemToolController {
+
+	@Autowired
+	private ResidenceService service;
+	
+	@ApiDescription("检查落户预约是否过期和评价过期;负责人:lihao")
+	@RequestMapping("checkResidencOutTime")
+	@ResponseBody
+	public DtoPublicResponse checkResidencOutTime() throws Exception {
+		DtoPublicResponse dtoResponse = new DtoPublicResponse();
+		int count = service.updateAppointmentAndApprasie();
+		dtoResponse.setMsg("updated : "+count);
+		return dtoResponse;
+	}
+
+}

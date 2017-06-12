@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:aop="http://www.springframework.org/schema/aop"
+     xmlns:tx="http://www.springframework.org/schema/tx"
+     xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+  <!-- <bean id="parentDataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+		<property name="maxIdleTime" value="900"/>
+		<property name="maxStatementsPerConnection" value="0" />
+		<property name="maxStatements" value="0" />
+		<property name="acquireRetryAttempts" value="3" />
+		<property name="acquireRetryDelay" value="250" />
+		<property name="autoCommitOnClose" value="false" />
+		<property name="checkoutTimeout" value="5000" />
+		<property name="idleConnectionTestPeriod" value="1800" />
+		<property name="numHelperThreads" value="10" />
+	</bean>
+	
+    <bean id="masterWmDataSource" parent="parentDataSource">
+		<property name="jdbcUrl" value="jdbc:mysql://120.26.169.207:3306/standard_ejingwu?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;useAffectedRows=true"/>
+		<property name="user" value="root"/>
+		<property name="password" value="827ef15430"/>
+		<property name="acquireIncrement" value="4" />
+		<property name="initialPoolSize" value="2" />
+		<property name="maxPoolSize" value="30" />
+		<property name="minPoolSize" value="2" />
+	</bean>  -->
+	
+    <bean id="masterWmDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close">
+        <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <!-- 基本属性 url、user、password -->
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="600000"/>
+        <property name="validationQuery" value="SELECT 1"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="log4j"/>
+        <property name="proxyFilters">
+            <list>
+                <bean class="com.alibaba.druid.filter.stat.StatFilter">
+                    <property name="slowSqlMillis" value="1000"/>
+                    <property name="logSlowSql" value="true"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+	
+	<bean id="wmJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="masterWmDataSource" />
+		</property>
+	</bean>
+	
+	<bean id="wmSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="masterWmDataSource" />
+        <property name="mapperLocations"  value="classpath:com/huaao/sunejwapi/mapper/*.xml" />
+    </bean>
+  
+    <bean id="wmMapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.huaao.sunejwapi.mapper" />
+        <property name="sqlSessionFactoryBeanName" value="wmSqlSessionFactory"/>
+    </bean>
+	
+</beans>

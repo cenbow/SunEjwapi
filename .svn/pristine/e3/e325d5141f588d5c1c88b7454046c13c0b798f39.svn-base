@@ -1,0 +1,61 @@
+package com.huaao.sunejwapi.api.dto.bean;
+
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+public class DictInfo {
+	
+	@ApiDescription("名称")
+    private String name;
+	
+	@ApiDescription("图片")
+    private String img;
+	
+	@ApiDescription("编码")
+    private String code;
+	
+	@ApiDescription("父级节点")
+    private Integer parentId;
+	
+	@ApiDescription("排序字段")
+	private Integer order;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getImg() {
+		return img;
+	}
+
+	public void setImg(String img) {
+		this.img = img;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public Integer getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
+	}
+
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+}

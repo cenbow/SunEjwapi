@@ -1,0 +1,67 @@
+package com.huaao.sunejwapi.api.dto.residence;
+
+import java.util.Date;
+
+import com.huaao.sunejwapi.api.dto.pub.DtoPublicRequest;
+import com.huaao.sunejwapi.common.web.ApiDemoData;
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+public class DtoResidenceAppointmentRequest extends DtoPublicRequest{
+	
+	@ApiDescription("落户表数据ID")
+	@ApiDemoData("12101")
+    private Integer id;
+
+	@ApiDescription("预约日期")
+	@ApiDemoData("2017-05-26")
+    private Date appointmentDate;
+
+	@ApiDescription("预约时段 0,1,2 上午三个时段， 5,6,7 下午三个时段")
+	@ApiDemoData("0")
+    private Integer appointmentTime;
+	
+	@ApiDescription("预约派出所 sps_s_dictionnary中residenceStation的子节点, 0 表示 江岸区公安分局户政服务中心")
+	@ApiDemoData("0")
+    private Integer stationCode;
+	
+	public Date getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    
+    public Integer getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    
+    public void setAppointmentTime(Integer appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
+
+	public Integer getId() {
+		return id;
+	}
+
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+
+	public Integer getStationCode() {
+		return stationCode;
+	}
+
+
+	public void setStationCode(Integer stationCode) {
+		this.stationCode = stationCode;
+	}
+    
+    
+}

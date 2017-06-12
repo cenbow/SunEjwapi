@@ -1,0 +1,8 @@
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://121.43.33.181:3306/sun_ejingwu?useUnicode=true&characterEncoding=utf8
+jdbc.username=root
+jdbc.password=huaaotest
+jdbc.initialSize=1
+jdbc.maxActive=50
+jdbc.minIdle=10
+jdbc.maxWait=60000

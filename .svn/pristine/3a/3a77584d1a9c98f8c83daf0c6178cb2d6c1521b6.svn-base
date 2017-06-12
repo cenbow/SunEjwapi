@@ -1,0 +1,21 @@
+package com.huaao.sunejwapi.api.dto.pub;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.huaao.sunejwapi.common.web.ApiDescription;
+
+public class DtoQueryDictRequest extends DtoPublicRequest{
+
+	@ApiDescription("数据字典父CODE,落户申报材料的样图和地址 :residenceSummary,派出所列表:residenceAddress")
+	@NotBlank
+	private String parentCode;
+
+	public String getParentCode() {
+		return parentCode;
+	}
+
+	public void setParentCode(String parentCode) {
+		this.parentCode = parentCode;
+	}
+	
+}
