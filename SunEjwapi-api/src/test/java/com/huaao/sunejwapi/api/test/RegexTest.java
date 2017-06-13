@@ -29,5 +29,8 @@ public class RegexTest {
 		String regex8 = "^h.*d$";
 		System.out.println("hello  world".matches(regex8));
 		
+		String regex9 = "^([a-z]|\\.)+$";
+		System.out.println("image.baidu.com".matches(regex9));
+		
 	}
 }
